@@ -1,6 +1,10 @@
-# newminhh Documentation
+# newminhh (`新明` — "New Tomorrow")
 
-**`newminhh`** is a container-less **i386 (`ELFCLASS32`, `EM_386`) compatibility system for x32-only (`ELFCLASS32`, `EM_X86_64`, ILP32) Linux**. It enables unmodified 32-bit x86 Linux executables and shared libraries (`.so`) to execute directly on an x86-64 host running an x32-only userspace (`ia32_emulation=0`, `syscall.x32=y`) with zero `:i386` packages, zero `libc6-i386`, and no `/lib/ld-linux.so.2`—while preserving kernel page-cache sharing of native x32 shared libraries (`libc.so.6`, `libm.so.6`, `libnewminhh_compat.so`) across concurrent processes.
+> **Start Here:** This repository ([`newminhh/docs`](https://github.com/newminhh/docs)) is the primary entrypoint for visitors exploring the **`newminhh`** ecosystem.
+>
+> **Meaning Behind the Name:** **`newminhh`** is named after **Tân Minh** commune (Hải Phòng, Vietnam), the author's home commune—translating to **"New Tomorrow"** in English and **新明** (*Xīn Míng*) in Simplified Chinese.
+
+**`newminhh`** is a container-less **`i386` (`ELFCLASS32`, `EM_386`) compatibility system for `x32`-only (`ELFCLASS32`, `EM_X86_64`, ILP32) Linux**. It runs unmodified 32-bit x86 Linux executables and shared libraries (`.so`) directly on an `x86_64` kernel with an `x32`-only userspace (`ia32_emulation=0`, `syscall.x32=y`) and zero `:i386` packages—combining an offline static/hybrid ELF rewriter, an in-process Long Mode dynamic binary translator, and a shared `x32` ABI marshaling runtime that preserves kernel page-cache sharing across processes.
 
 ---
 
