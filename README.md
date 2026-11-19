@@ -227,3 +227,24 @@ Host-only wrappers around `vm/vm-*.sh`:
 - `newminhh vm verify` — Verify pure x32 VM configuration (zero `:i386` packages, `ia32_emulation=0`)
 - `newminhh vm exec [-- command... | --sync local remote | --ip]` — Execute commands or sync directories over SSH
 - `newminhh vm console [--tio | --screen | --pty | --endpoint]` — Attach to the VM's TCP serial console
+
+---
+
+## Referenced Sources & Architectural Influences
+
+The following sources were actively referenced and adapted during the design and implementation of `newminhh`:
+
+- **[Original Design Conversation (`share.google/aimode`)](https://share.google/aimode/7RVXOzvKN6OdZJ1Ft)** — Foundational architectural blueprint for container-less `i386`-on-`x32` execution via shared in-process `x32` ABI thunking, hybrid static ELF patching + compatibility library (`libnewminhh_compat.so`), bidirectional `.so` entry/exit wrappers, 64-bit struct alignment repacking (`stat`, `timespec`, `rlimit`), and runtime DBT fallback.
+- **[Box86 (`ptitseb/box86`)](https://github.com/ptitseb/box86)** — Inspired the signature-driven `cdecl`-to-host calling convention marshaling tables (`newminhh_call_x32_sig` and `g_sym_table[]`), synthetic `INT3` (`0xCC 'N' 'M' <id>`) PLT/GOT exit-to-host bridge stubs in `libnewminhh_dbt.so`, and W^X reverse-callback trampoline pool design.
+- **[Box64 (`ptitseb/box64`)](https://github.com/ptitseb/box64)** — Referenced for 64-bit Long Mode library wrapping and contrasted against `x32`'s unified `< 4 GiB` ILP32 pointer space.
+- **[FEX-Emu (`FEX-Emu/FEX`)](https://github.com/FEX-Emu/FEX)** — Referenced for `i386`-on-`x86_64` Long Mode register allocation (`%r12d` = guest `ESP`, `%r14d` = guest `GS` base, `%r15` = `newminhh_cpu_t *` state pointer) and low-4GiB guest ELF loading (`newminhh-run` linked at `0x70000000`).
+- **[Android Binary Translation / Berberis (`platform/frameworks/libs/binary_translation`)](https://android.googlesource.com/platform/frameworks/libs/binary_translation/)** — Referenced for two-tier TLS/ThreadState anchoring (`__thread` host `FS` TLS vs. guest `GS` base via `ARCH_SET_GS`), ABI trampolines, direct basic-block chaining, and fast 64K indirect-branch lookup caching.
+- **[Alex Alejandre — *Janet on x32: 32-bit Pointers, 64-bit Speed, 25% Less RAM*](https://alexalejandre.com/programming/lisp/janet-for-the-x32-abi)** — Original inspiration demonstrating `x32` ILP32 memory savings with full 64-bit register performance.
+- **[Phoronix — *Linux x32 ABI in 2026*](https://www.phoronix.com/news/Linux-x32-ABI-2026)** & **[LWN — *Reconsidering x32 — again*](https://lwn.net/Articles/1074897/)** — Reference for 2026 mainline kernel `CONFIG_X86_X32_ABI` deprecation and kernel requirements.
+
+---
+
+## Authors & Contributors
+
+- **[shadichy](https://github.com/shadichy)** (`shadichy@blisslabs.org`) — Author & Project Lead
+- **Antigravity (Google DeepMind)** — Contributor (multi-agent architecture, implementation, static/dynamic translation pipelines, verification suites, and documentation)
