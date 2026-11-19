@@ -17,6 +17,7 @@
 | [README.md](./README.md) | Project overview, split repository map, build/installation guide, and `bin/newminhh` CLI reference |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Deep technical reference for `common`, `compat`, `dbt`, and `patcher` (ABIs, registers, memory map, trampolines, syscalls, struct repacking, dynamic linking, static rewriting, and hybrid fallback) |
 | [TESTING_AND_VM.md](./TESTING_AND_VM.md) | Guide to the Debian x32 libvirt/KVM VM scripts (`vm/`) and Parts 1–5 verification & `/proc/<pid>/smaps` benchmarking suites (`tests/`) |
+| [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) | Community standards and Contributor Covenant Code of Conduct for all `newminhh` repositories |
 
 ---
 
@@ -48,7 +49,8 @@ The project is organized into six repositories under the `https://github.com/new
 | [`newminhh/patcher`](https://github.com/newminhh/patcher) | `src/patcher/` | `newminhh-patch`, `re_patcher/` | Containerized (`re-env:latest`) static/hybrid binary analyzer, 4-byte-stride Long Mode rewriter, x32 GAS trampoline generator, and `EM_X86_64` ELF32 builder |
 | [`newminhh/tests`](https://github.com/newminhh/tests) | `tests/` | `corpus/`, `part2/`–`part5/` | Parts 1–5 verification corpus (`C01`–`C11`, `S01`–`S03`, `N01`–`N09`), unit/regression suites, and `/proc/<pid>/smaps` benchmark harness |
 | [`newminhh/vm_test_scripts`](https://github.com/newminhh/vm_test_scripts) | `vm/` | `domain.xml.in`, `vm-*.sh` | Debian `x32` `libvirt-qemu` provisioning, guest command execution, and `x32`-only isolation checks |
-| [`newminhh/docs`](https://github.com/newminhh/docs) | `docs/` | `README.md`, `ARCHITECTURE.md`, `TESTING_AND_VM.md` | System-level, architectural, VM, and testing/benchmark documentation |
+| [`newminhh/docs`](https://github.com/newminhh/docs) | `docs/` | `README.md`, `ARCHITECTURE.md`, `TESTING_AND_VM.md`, `CODE_OF_CONDUCT.md` | System-level, architectural, VM, testing/benchmark documentation, and Code of Conduct |
+| [`newminhh/issues`](https://github.com/newminhh/issues) | *(standalone)* | `.github/ISSUE_TEMPLATE/` | Central issue tracker, bug reports, `i386` binary compatibility reports, and feature requests |
 | [`newminhh/agent-notice`](https://github.com/newminhh/agent-notice) | *(archived)* | `PROJECT.md`, `.agents/` | Archived agent planning, milestone review, and Victory Audit artifacts |
 
 ```mermaid
