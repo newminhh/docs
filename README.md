@@ -40,7 +40,10 @@ The project is organized into six repositories under the `https://github.com/new
 | [`newminhh/compat`](https://github.com/newminhh/compat) | `src/compat/` | `libnewminhh_compat.so` | x32 ABI runtime library: cdecl<->x32 assembly bridges, W^X trampoline pools, syscall translator, struct repacker, `dlopen`/`dlsym` router, and libc/libm/pthread wrappers |
 | [`newminhh/dbt`](https://github.com/newminhh/dbt) | `src/dbt/` | `libnewminhh_dbt.so`, `newminhh-run` | In-process i386 ELF32 loader, Capstone x86-to-x86-64 JIT emitter, fast branch cache, edge chaining/unchaining, and NX-guard `SIGSEGV` callback dispatcher |
 | [`newminhh/patcher`](https://github.com/newminhh/patcher) | `src/patcher/` | `newminhh-patch`, `re_patcher/` | Containerized (`re-env:latest`) static/hybrid binary analyzer, 4-byte-stride Long Mode rewriter, x32 GAS trampoline generator, and `EM_X86_64` ELF32 builder |
+| [`newminhh/tests`](https://github.com/newminhh/tests) | `tests/` | `corpus/`, `part2/`–`part5/` | Parts 1–5 verification corpus (`C01`–`C11`, `S01`–`S03`, `N01`–`N09`), unit/regression suites, and `/proc/<pid>/smaps` benchmark harness |
+| [`newminhh/vm_test_scripts`](https://github.com/newminhh/vm_test_scripts) | `vm/` | `domain.xml.in`, `vm-*.sh` | Debian `x32` `libvirt-qemu` provisioning, guest command execution, and `x32`-only isolation checks |
 | [`newminhh/docs`](https://github.com/newminhh/docs) | `docs/` | `README.md`, `ARCHITECTURE.md`, `TESTING_AND_VM.md` | System-level, architectural, VM, and testing/benchmark documentation |
+| [`newminhh/agent-notice`](https://github.com/newminhh/agent-notice) | *(archived)* | `PROJECT.md`, `.agents/` | Archived agent planning, milestone review, and Victory Audit artifacts |
 
 ```mermaid
 graph TB
