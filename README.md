@@ -2,6 +2,8 @@
 
 > **Start Here:** This repository ([`newminhh/docs`](https://github.com/newminhh/docs)) is the primary entrypoint for visitors exploring the **`newminhh`** ecosystem.
 >
+> **Original Goal & Inspiration:** **"Better capability, less RAM usage guaranteed"** — inspired by Alex Alejandre's [*Janet on x32: 32-bit Pointers, 64-bit Speed, 25% Less RAM*](https://alexalejandre.com/programming/lisp/janet-for-the-x32-abi), which demonstrates how the Linux `x32` ABI combines 32-bit compact pointers (`__ILP32__`, cutting RAM usage by 20–50%) with full 64-bit Long Mode instruction sets and all 16 general-purpose registers (avoiding the ~50% speed penalty of legacy `-m32` IA-32 mode). **`newminhh`** eliminates the last barrier to running a pure `x32` userspace: executing legacy 32-bit `i386` executables and `.so` libraries directly against native `x32` system libraries in RAM without duplicating `i386` multilib libraries.
+>
 > **Meaning Behind the Name:** **`newminhh`** is named after **Tân Minh** commune (Hải Phòng, Vietnam), the author's home commune—translating to **"New Tomorrow"** in English and **新明** (*Xīn Míng*) in Simplified Chinese.
 
 **`newminhh`** is a container-less **`i386` (`ELFCLASS32`, `EM_386`) compatibility system for `x32`-only (`ELFCLASS32`, `EM_X86_64`, ILP32) Linux**. It runs unmodified 32-bit x86 Linux executables and shared libraries (`.so`) directly on an `x86_64` kernel with an `x32`-only userspace (`ia32_emulation=0`, `syscall.x32=y`) and zero `:i386` packages—combining an offline static/hybrid ELF rewriter, an in-process Long Mode dynamic binary translator, and a shared `x32` ABI marshaling runtime that preserves kernel page-cache sharing across processes.
