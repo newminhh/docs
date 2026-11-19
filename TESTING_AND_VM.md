@@ -6,7 +6,10 @@ This guide covers the pure x32 Debian VM lifecycle tooling in `vm/` and the five
 
 ## 1. Debian x32-Only Libvirt/QEMU VM (`vm/`)
 
-All target runtime verification runs inside a KVM-accelerated Debian `sid` (`debian-ports`) **pure x32** virtual machine whose kernel explicitly disables 32-bit IA-32 emulation.
+All target runtime verification runs inside a KVM-accelerated Debian `sid` (`debian-ports`) **pure x32** virtual machine whose kernel explicitly enables `x32` syscalls (`syscall.x32=y`) and disables 32-bit IA-32 emulation (`ia32_emulation=0`).
+
+> [!IMPORTANT]
+> **Kernel Requirement (`CONFIG_X86_X32_ABI=y` & `syscall.x32=y`):** Mainline Linux began retiring `CONFIG_X86_X32_ABI` in 2026 ([Phoronix](https://www.phoronix.com/news/Linux-x32-ABI-2026), [LWN](https://lwn.net/Articles/1074897/)). The guest (or bare-metal target) kernel must be compiled with `CONFIG_X86_X32_ABI=y` (or `CONFIG_X86_X32=y` on older series—e.g., Linux 3.4–7.2, pre-removal Debian 7.3 `amd64` kernels, or LTS kernels 6.1/6.6/6.12/6.18 with `CONFIG_X86_X32_ABI=y`) and booted with `syscall.x32=y`. Note that the **x86_64 KVM host** running `libvirt-qemu` does *not* need `CONFIG_X86_X32_ABI=y` in its host kernel when executing `newminhh` inside the `newminhh-x32` VM, because the guest boots its own kernel.
 
 ### 1.1 VM Domain Definition (`vm/domain.xml.in`)
 

@@ -85,9 +85,20 @@ graph TB
 - **Static binary patching** (`src/patcher/`): `docker` with the **`re-env:latest`** image (contains Python `/opt/re-venv/bin/python3`, `elftools`, `capstone`, `angr`/`cle`, GNU `as`/`ld` with `--x32`/`elf32_x86_64`, `radare2`, and `/opt/ghidra/support/analyzeHeadless`)
 
 ### Target / Guest (Debian x32)
-- Kernel booted with `syscall.x32=y ia32_emulation=0`
+- Kernel compiled with **`CONFIG_X86_X32_ABI=y`** (or `CONFIG_X86_X32=y`) and booted with **`syscall.x32=y ia32_emulation=0`**
 - Pure `x32` userspace (`dpkg --print-architecture` == `x32`, zero `:i386` packages)
 - `gcc`, `g++`, `make`, `binutils`, `libc6-dev`, `linux-libc-dev`, `libcapstone-dev`, `python3`, `rsync`, `file`, `procps`
+
+> [!IMPORTANT]
+> **Kernel Requirements Notice (2026 Mainline Linux `x32` ABI Deprecation/Removal):**
+> According to [Phoronix (*Linux x32 ABI in 2026*)](https://www.phoronix.com/news/Linux-x32-ABI-2026) and [LWN (*Reconsidering x32 — again*)](https://lwn.net/Articles/1074897/), mainline Linux moved in 2026 (around Linux 7.3+) to retire and remove the `x32` ABI (`CONFIG_X86_X32_ABI`, gating it behind `BROKEN` before removal). Because `newminhh` executes inside an `x32` userspace (`ELFCLASS32` `EM_X86_64`, using `0x40000000`-masked `x32` syscalls), the target/guest kernel **must** support the `x32` ABI:
+> 1. **Kernel Version & Kconfig:** Run a kernel built with **`CONFIG_X86_X32_ABI=y`** (or **`CONFIG_X86_X32=y`**)—specifically **Linux 3.4 through 7.2** (or pre-removal 7.3 builds such as Debian's `linux-image-amd64`), an **LTS kernel** (e.g., Linux 6.1, 6.6, 6.12, or 6.18 LTS) compiled with `CONFIG_X86_X32_ABI=y`, or a custom newer kernel with the `x32` removal / `BROKEN` gate reverted.
+> 2. **Boot Command-Line Flag (`syscall.x32=y`):** Distro kernels that compile `CONFIG_X86_X32_ABI=y` typically also set `CONFIG_X86_X32_DISABLED=y` by default. You **must** pass **`syscall.x32=y`** on the kernel command line (and **`ia32_emulation=0`** to verify pure `x32`-only execution without kernel IA-32 emulation).
+> 3. **Verify Before Running:**
+>    ```bash
+>    zgrep -E 'CONFIG_X86_X32(_ABI)?=' /proc/config.gz /boot/config-$(uname -r) 2>/dev/null
+>    grep 'syscall.x32=y' /proc/cmdline
+>    ```
 
 ---
 
