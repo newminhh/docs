@@ -158,7 +158,7 @@ sequenceDiagram
     participant DBT as g_guest_invoker (Unpatched DBT)
 
     X32->>POOL: callq slot_addr (%rdi..%r9, %xmm0..%xmm7)
-    POOL->>CB: movl $slot_id, %r11d; jmp newminhh_cb_common
+    POOL->>CB: movl $slot_id, %r11d<br/>jmp newminhh_cb_common
     CB->>CB: marshal x32 regs + spills -> cdecl uint32_t words[]
     CB->>MODE: check newminhh_mode_for_va(guest_fn_va)
     alt NM_CB_MODE_NATIVE_CDECL
