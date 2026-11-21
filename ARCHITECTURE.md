@@ -53,11 +53,14 @@ flowchart TB
 
 ## 2. Common ABI Contract (`src/common/`)
 
-`newminhh/common` consists of two header files included by both C translation units and GAS assembly files (guarded by `#ifndef __ASSEMBLER__`).
+`newminhh/common` consists of three header files included by C translation units and GAS assembly files (guarded by `#ifndef __ASSEMBLER__`):
+- `newminhh_cstd.h` — Standard GNU C23 baseline (`__STDC_VERSION__ >= 202311L`), nullability, and cross-compiler safety macros.
+- `newminhh_abi.h` — Virtual CPU context, ABI offsets, struct repacking definitions, calling conventions, and symbol tables.
+- `newminhh_log.h` — C23 `__VA_OPT__(,)` structured logging macros (`NM_LOG_ERROR`, `NM_LOG_WARN`, `NM_LOG_INFO`, `NM_LOG_DEBUG`).
 
 ### 2.1 Virtual CPU Context (`newminhh_cpu_t`)
 
-Defined in `src/common/newminhh_abi.h`, `newminhh_cpu_t` is 16-byte aligned and exactly **592 bytes** (`NM_CPU_SIZE = 592`), verified at compile time with `_Static_assert`:
+Defined in `src/common/newminhh_abi.h`, `newminhh_cpu_t` is 16-byte aligned (`alignas(16)`) and exactly **592 bytes** (`NM_CPU_SIZE = 592`), verified at compile time with standard C23 `static_assert`:
 
 | Byte Offset | Macro Constant | Field | Width | Purpose |
 | :--- | :--- | :--- | :--- | :--- |
@@ -91,7 +94,20 @@ Exit reason constants:
   - `NM_SYM_FLAG_VARIADIC (1u << 1)` — Variadic function (`open`, `fcntl`, `ioctl`, `printf`, etc.)
   - `NM_SYM_FLAG_CDECL_DIRECT (1u << 2)` — Wrapper directly consumes `const uint32_t *cdecl_args` (`compat_*_cdecl`)
 - **Callback & dlopen flags**: `NM_CB_MODE_NATIVE_CDECL (0)`, `NM_CB_MODE_DBT (1)`, `NM_CB_FLAG_UNTYPED (1u << 0)`, `NM_RTLD_CDECL (0x10000)`.
-- **Structured logging (`newminhh_log.h`)**: `NM_LOG_ERROR` and `NM_LOG_WARN` always print `[newminhh:<mod>] ERROR|WARN: ...` to `stderr`; `NM_LOG_INFO` emits only when `NEWMINHH_DEBUG` is set to a non-empty, non-`"0"` value.
+- **Structured logging (`newminhh_log.h`)**: Uses standard C23 `__VA_OPT__(,)` to eliminate legacy GNU zero-variadic comma pasting warnings. `NM_LOG_ERROR` and `NM_LOG_WARN` always print `[newminhh:<mod>] ERROR|WARN: ...` to `stderr`; `NM_LOG_INFO` emits only when `NEWMINHH_DEBUG` is set to a non-empty, non-`"0"` value.
+
+### 2.3 C23 Conformance & Cross-Compiler Portability (`newminhh_cstd.h`)
+
+All C translation units enforce ISO C23 (`__STDC_VERSION__ >= 202311L`) with zero legacy shims:
+- **Language Keywords**: `alignas`, `alignof`, `static_assert`, `thread_local`, `bool`, `true`, `false`, `nullptr`, `constexpr`.
+- **Standard Headers**: `<stdckdint.h>` (`ckd_add`, `ckd_sub`, `ckd_mul`), `<stdbit.h>` (`stdc_has_single_bit`, `stdc_bit_ceil`), `<stdatomic.h>` (`_Atomic` and `atomic_*_explicit`).
+- **Guarded Extensions**:
+  - Clang nullability qualifiers (`NM_NONNULL_PTR` -> `_Nonnull`, `NM_NULLABLE_PTR` -> `_Nullable`) enabling `-Wnullability-completeness`.
+  - Non-escaping pointers (`NM_NOESCAPE` -> `[[clang::noescape]]`).
+  - Clang compile-time diagnostics (`NM_DIAGNOSE_IF`).
+  - Dual GCC/Clang flexible-array bounds safety (`NM_COUNTED_BY`).
+  - Type-safe array element counts (`NM_COUNTOF`).
+  - Strict ISO C function pointer <-> `void *` casting without diagnostics (`NM_FN_TO_VOIDP`, `NM_VOIDP_TO_FN`).
 
 ---
 

@@ -162,6 +162,24 @@ make clean      # cleans compat, dbt, tests/corpus/build/x32, part2, part4
   ```
 - **`patcher`** (`src/patcher/`): Pure Python + shell wrapper executed inside Docker (`re-env:latest`); requires no local compilation step.
 
+### Bleeding-Edge GNU C23 & LLVM Clang Toolchain Architecture
+
+The entire `newminhh` C codebase (`common`, `compat`, `dbt`, `tests`) targets **bleeding-edge GNU C23 (`-std=gnu23`)**:
+- **Primary Compiler**: LLVM Clang (`>= 21`, default `CC ?= clang`).
+- **Secondary Compiler**: GCC (`>= 15`, verified via `CC=gcc`).
+- **Opt-in Standards**: Compatible with `CSTD=gnu2y`.
+- **Strict Diagnostics**: Enforced under `-Wall -Wextra -Wpedantic -Wstrict-prototypes -Wold-style-definition -Wshadow -Wundef -Wformat=2 -fstrict-flex-arrays=3 -Werror` (plus Clang `-Wnullability-completeness -Wno-nullability-extension -Wno-gcc-compat -Wno-deprecated-octal-literals`).
+- **Guarded Cross-Compiler Safety (`newminhh_cstd.h`)**:
+  - Clang nullability qualifiers (`NM_NONNULL_PTR`, `NM_NULLABLE_PTR`).
+  - Clang non-escaping pointer annotations (`NM_NOESCAPE`).
+  - Clang compile-time diagnostic checks (`NM_DIAGNOSE_IF`).
+  - Dual GCC/Clang bounds safety (`NM_COUNTED_BY`).
+  - Standard C23 keywords and headers used directly: `nullptr`, `alignas`, `alignof`, `static_assert`, `thread_local`, `bool`, `{}`, `<stdckdint.h>`, `<stdbit.h>`, `<stdatomic.h>`.
+- **C11/C23 Libc Runtime Wrappers**:
+  - `aligned_alloc`, `timespec_get`, `quick_exit`, `strndup`, `memchr`, `memccpy`, `memset_explicit`, `free_sized`, `free_aligned_sized`.
+- **Static Analysis**:
+  - `make analyze` runs `clang --analyze` (under Clang) or `gcc -fanalyzer` (under GCC) across `src/compat`, `src/dbt`, and `tests/`.
+
 ---
 
 ## CLI Usage (`bin/newminhh`)
